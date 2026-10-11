@@ -1,4 +1,26 @@
 {
   "schemaVersion": 1,
-  "plugins": []
+  "plugins": [
+    {
+      "id": "auton-computer-use",
+      "kind": "package",
+      "name": "Computer Use",
+      "description": "Observation-first computer use: lists windows and browser pages, takes screenshots and accessibility snapshots, and (after you enable it) performs confirmed clicks and keystrokes. MCP plugin; restart Auton Knowledge after enabling.",
+      "repository": "philip1974/auton-computer-use-release",
+      "ref": "v0.0.0",
+      "assets": [
+        {
+          "platform": "darwin-arm64",
+          "name": "auton-computer-use-0.0.0-darwin-arm64.tgz",
+          "bytes": 3497851,
+          "sha256": "bee676b0bd2ecb209095eb86b57972b92d9685230a8e792981b7d8f06964b386"
+        }
+      ],
+      "tags": [
+        "computer-use",
+        "mcp"
+      ],
+      "verified": false
+    }
+  ]
 }

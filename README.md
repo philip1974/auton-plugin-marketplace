@@ -4,7 +4,7 @@
 empty until a runtime plugin has been reviewed; discovery never makes an unreviewed repository
 installable by itself.
 
-Each entry has this shape:
+A runtime plugin (cloned from source) has this shape:
 
 ```json
 {
@@ -19,6 +19,28 @@ Each entry has this shape:
 ```
 
 - `id` must match the runtime manifest exactly.
+- A declarative (MCP) plugin released as prebuilt archives uses `"kind": "package"` instead:
+
+  ```json
+  {
+    "id": "plugin-directory-name",
+    "kind": "package",
+    "name": "Example",
+    "description": "One bounded, plain-text description.",
+    "repository": "owner/release-repository",
+    "ref": "v1.0.0",
+    "assets": [
+      { "platform": "darwin-arm64", "name": "example-1.0.0-darwin-arm64.tgz", "bytes": 1234, "sha256": "<64 lowercase hex>" }
+    ],
+    "tags": [],
+    "verified": false
+  }
+  ```
+
+  `id` is the `name` in the package's `plugin.json`. `ref` is the release tag; each asset is downloaded from
+  `https://github.com/<repository>/releases/download/<ref>/<name>`, and the app installs it only if its size and
+  SHA-256 match. `platform` is `<process.platform>-<process.arch>`; a computer without a matching asset sees the
+  entry but cannot install it.
 - `repository` is a GitHub `owner/repository` pair, never a URL.
 - `ref` is optional. Prefer an immutable release tag; installation records the resolved full commit.
 - `verified` is a catalog-owner assertion. Set it to `true` only after source and requested permissions
