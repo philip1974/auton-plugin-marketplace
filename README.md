@@ -1,0 +1,83 @@
+# Auton Plugin Marketplace
+
+`index.json` is the curated catalog consumed by `auton-knowledge`. The catalog is intentionally
+empty until a runtime plugin has been reviewed; discovery never makes an unreviewed repository
+installable by itself.
+
+Each entry has this shape:
+
+```json
+{
+  "id": "com.example.plugin",
+  "name": "Example plugin",
+  "description": "One bounded, plain-text description.",
+  "repository": "owner/repository",
+  "ref": "v1.0.0",
+  "tags": ["knowledge"],
+  "verified": false
+}
+```
+
+- `id` must match the runtime manifest exactly.
+- `repository` is a GitHub `owner/repository` pair, never a URL.
+- `ref` is optional. Prefer an immutable release tag; installation records the resolved full commit.
+- `verified` is a catalog-owner assertion. Set it to `true` only after source and requested permissions
+  have been reviewed; it is not inferred from stars, publisher claims, or GitHub metadata.
+- Duplicate IDs or one malformed entry invalidate the complete catalog. The app keeps only the last
+  valid in-memory snapshot as an offline fallback.
+
+## Authoring and submission
+
+In Auton Knowledge, open **Settings → Extensions** and use **Create template** with an empty directory.
+The generated project contains a valid `plugin.json`, a no-permission `main.mjs` command plugin, an optional
+`styles.css`, and a short README. Use **Publishing preflight** on that directory before installing or submitting it.
+Runtime plugins can persist plugin-scoped JSON state with `this.loadData()` and `this.saveData(value)`. The app
+owns the storage path, isolates it by plugin ID, and enforces a 1 MiB serialized snapshot limit.
+Commands may declare an optional canonical `hotkey`, such as `mod+k` or `shift+mod+h`. Built-in app
+shortcuts take priority, duplicate plugin hotkeys are rejected, and unmodified or shift-only shortcuts do
+not fire while the user is typing in an editable control. Disabling or reloading a plugin releases its
+shortcut together with the command.
+Plugins can contribute compact left or right status items with
+`this.addStatusBarItem({ id, side, priority, render })`. Lower priorities render first; equal priorities
+are ordered by the namespaced item ID. The DOM `render(container)` callback should return cleanup logic.
+The status bar is absent when no plugin contributes an item, and disabling, reloading, or uninstalling a
+plugin removes its mounted items immediately.
+Plugins can contribute compact top-bar actions with
+`this.addRibbonAction({ id, title, icon, priority, onClick })`. Icons are rendered as bounded plain text
+or emoji, lower priorities render first, and equal priorities are ordered by namespaced action ID.
+Actions are removed with the plugin lifecycle; a stale click can never invoke an unloaded plugin action.
+Plugins can register a right-dock panel with `this.addPanel({ id, title, render })` and open or close it
+through `this.openPanel(id)` / `this.closePanel(id)`. Panel IDs are plugin-scoped, only one plugin panel
+is active at a time, and render cleanup runs on close, disable, reload, or uninstall.
+Plugins can decorate Knowledge explorer documents with
+`this.registerExplorerDecorator({ id, priority, decorate })`. The callback receives bounded document
+metadata and may return a short plain-text icon, badge, semantic tone, or tooltip. Outputs are validated
+and merged by priority; callback failures are isolated per document row.
+Plugins can contribute a namespaced Settings page with `this.addSettingTab({ id, title, render })`. The
+`render(container)` callback uses ordinary DOM APIs and should return a cleanup function; disabling,
+reloading, or uninstalling the plugin removes both its navigation entry and mounted resources.
+Plugins that declare and receive the explicit `agent.tools` permission can call
+`await this.addAgentTool({ name, description, inputSchema, run })`. The tool is registered in the active
+Knowledge Agent, always passes through normal tool confirmation, returns bounded text, and is removed
+automatically when the plugin unloads.
+An optional root-level `styles.css` is mounted only while the plugin is active and is removed on failed
+activation, disable, reload, or uninstall. Keep selectors scoped to the plugin's
+`data-plugin-setting-tab`, `data-plugin-status-item`, `data-plugin-ribbon-action`, `data-plugin-panel`, or
+`data-plugin-explorer-decoration` container. Stylesheets are limited to 4 MiB; an unsafe or unreadable stylesheet
+is reported without preventing the JavaScript plugin from loading.
+Runtime plugins currently share the app renderer realm, so ID scoping prevents filesystem collisions but is
+not a sandbox between hostile plugins. Install only code you trust.
+
+Auton Knowledge polls installed plugin manifests, runtime entries, and optional stylesheets for local changes, coalesces rapid save
+bursts, and reloads the affected plugin automatically. **Reload** in **Settings → Extensions** remains
+available for explicit recovery. Both paths invalidate the module URL before reconciling the runtime inventory;
+if the edited manifest or entry is no longer valid, the previously active instance is removed fail-closed.
+
+The preflight uses the same runtime manifest rules and package limits as installation. It rejects
+symbolic links, non-regular filesystem entries, escaping or missing runtime entries, oversized packages,
+and malformed manifests. Passing the preflight does not grant `verified: true`; verification remains a
+separate source and permission review by the catalog owner.
+
+To submit a plugin, publish the checked directory in a dedicated GitHub repository, create an immutable
+release tag, and open a pull request adding one entry to `index.json`. The entry `id` must exactly match
+`plugin.json`.
