@@ -41,6 +41,9 @@ A runtime plugin (cloned from source) has this shape:
   `https://github.com/<repository>/releases/download/<ref>/<name>`, and the app installs it only if its size and
   SHA-256 match. `platform` is `<process.platform>-<process.arch>`; a computer without a matching asset sees the
   entry but cannot install it.
+  To ship a new release, change `ref` (and the asset's `name`, `bytes`, `sha256`). Computers that installed the
+  previous release then show **Update**; the new archive is verified before the old one is replaced, and the
+  plugin keeps its enabled state.
 - `repository` is a GitHub `owner/repository` pair, never a URL.
 - `ref` is optional. Prefer an immutable release tag; installation records the resolved full commit.
 - `verified` is a catalog-owner assertion. Set it to `true` only after source and requested permissions
