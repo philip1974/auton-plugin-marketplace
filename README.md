@@ -1,8 +1,7 @@
 # Auton Plugin Marketplace
 
-`index.json` is the curated catalog consumed by `auton-knowledge`. The catalog is intentionally
-empty until a runtime plugin has been reviewed; discovery never makes an unreviewed repository
-installable by itself.
+`index.json` is the curated catalog consumed by `auton-knowledge`. Only reviewed entries are listed;
+discovery never makes an unreviewed repository installable by itself.
 
 A runtime plugin (cloned from source) has this shape:
 
@@ -44,12 +43,18 @@ A runtime plugin (cloned from source) has this shape:
   To ship a new release, change `ref` (and the asset's `name`, `bytes`, `sha256`). Computers that installed the
   previous release then show **Update**; the new archive is verified before the old one is replaced, and the
   plugin keeps its enabled state.
+- `descriptions` is optional: the description in other languages, keyed by language id
+  (`"zh"`, `"ja"`, `"ko"`, `"pt-BR"`). The app shows the one for its display language and falls back to
+  `description`, which stays the English text. Each text follows the same rules as `description`.
 - `repository` is a GitHub `owner/repository` pair, never a URL.
 - `ref` is optional. Prefer an immutable release tag; installation records the resolved full commit.
 - `verified` is a catalog-owner assertion. Set it to `true` only after source and requested permissions
   have been reviewed; it is not inferred from stars, publisher claims, or GitHub metadata.
-- Duplicate IDs or one malformed entry invalidate the complete catalog. The app keeps only the last
-  valid in-memory snapshot as an offline fallback.
+- Duplicate IDs or a known field with a malformed value invalidate the complete catalog. The app keeps
+  only the last valid in-memory snapshot as an offline fallback.
+- The catalog can grow without breaking older apps: a field an app does not know is ignored (never
+  trusted), and an entry whose `kind` it does not know is skipped while the rest still show. Apps
+  before this rule rejected both; no released app has that behavior.
 
 ## Authoring and submission
 

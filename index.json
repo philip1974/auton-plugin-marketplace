@@ -6,6 +6,11 @@
       "kind": "package",
       "name": "Computer Use",
       "description": "Observation-first computer use: lists windows and browser pages, takes screenshots and accessibility snapshots, and (after you enable it) performs confirmed clicks and keystrokes. MCP plugin; restart Auton Knowledge after enabling.",
+      "descriptions": {
+        "zh": "以观察为先的电脑操作：列出窗口和浏览器页面，截图并读取无障碍快照；开启后，在你确认后执行点击和按键。MCP 插件，启用后需重启 Auton Knowledge。",
+        "ja": "観察を優先したコンピューター操作：ウィンドウとブラウザーのページを一覧し、スクリーンショットとアクセシビリティのスナップショットを取得します。有効にすると、確認のうえでクリックやキー入力を行います。MCP プラグインです。有効にした後は Auton Knowledge を再起動してください。",
+        "ko": "관찰 우선 컴퓨터 사용: 창과 브라우저 페이지를 나열하고 스크린숏과 접근성 스냅숏을 가져옵니다. 사용하도록 설정하면 확인을 거쳐 클릭과 키 입력을 수행합니다. MCP 플러그인이며, 사용 설정 후 Auton Knowledge를 다시 시작해야 합니다."
+      },
       "repository": "philip1974/auton-computer-use-release",
       "ref": "v0.0.0",
       "assets": [
@@ -26,6 +31,11 @@
       "id": "dev.auton.browser-panel",
       "name": "Browser Panel",
       "description": "Browse the web in a right-dock panel; the Agent can read the page you are viewing and the text you select. Needs an Auton Knowledge version that supports the web.browse permission, and agent.tools.",
+      "descriptions": {
+        "zh": "在右侧面板里浏览网页；Agent 可以读取你正在看的页面和你选中的文字。需要支持 web.browse 权限和 agent.tools 的 Auton Knowledge 版本。",
+        "ja": "右側のパネルでウェブを閲覧します。Agent は表示中のページと選択したテキストを読み取れます。web.browse 権限と agent.tools に対応した Auton Knowledge が必要です。",
+        "ko": "오른쪽 패널에서 웹을 탐색합니다. Agent가 보고 있는 페이지와 선택한 텍스트를 읽을 수 있습니다. web.browse 권한과 agent.tools를 지원하는 Auton Knowledge 버전이 필요합니다."
+      },
       "repository": "philip1974/auton-browser-panel",
       "ref": "v0.1.0",
       "tags": [
