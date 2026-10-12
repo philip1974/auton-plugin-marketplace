@@ -25,7 +25,7 @@
     {
       "id": "dev.auton.browser-panel",
       "name": "Browser Panel",
-      "description": "Browse the web in a right-dock panel; the Agent can read the page you are viewing and the text you select. Needs web.browse (Auton Knowledge with topic 1342) and agent.tools.",
+      "description": "Browse the web in a right-dock panel; the Agent can read the page you are viewing and the text you select. Needs an Auton Knowledge version that supports the web.browse permission, and agent.tools.",
       "repository": "philip1974/auton-browser-panel",
       "ref": "v0.1.0",
       "tags": [
