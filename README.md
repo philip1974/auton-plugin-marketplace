@@ -95,6 +95,50 @@ activation, disable, reload, or uninstall. Keep selectors scoped to the plugin's
 `data-plugin-setting-tab`, `data-plugin-status-item`, `data-plugin-ribbon-action`, `data-plugin-panel`, or
 `data-plugin-explorer-decoration` container. Stylesheets are limited to 4 MiB; an unsafe or unreadable stylesheet
 is reported without preventing the JavaScript plugin from loading.
+### API reference
+
+Every method below is on `this` inside a class that extends `globalThis.autonKnowledge.Plugin`.
+Registrations are removed automatically when the plugin is disabled, reloaded, or uninstalled.
+
+| Method | What it does |
+| --- | --- |
+| `addCommand({ id, title, description?, hotkey?, callback(args) })` | A command in the slash list; optional `hotkey` such as `mod+k`. |
+| `addDocumentAction({ id, title, icon?, priority?, when?(doc), onClick(doc) })` | A button in the open document's toolbar. |
+| `addDocumentMenuItem({ id, title, icon?, group?, priority?, when?(doc), onSelect(doc) })` | An entry in the document's context menu. |
+| `showNotice({ message, title?, kind?, timeoutMs? })` | A notification; `kind` is `info`, `success`, `warning` or `error`; `timeoutMs` 0 keeps it until dismissed, otherwise 1,000–30,000. |
+| `onEvent(name, listener)` | `appearance.theme-changed` `{ theme }`, `appearance.locale-changed` `{ locale }`; with `knowledge.read` also `knowledge.document-opened` `{ path, anchor }` and `knowledge.index-changed` `{ status }`. |
+| `addSettingItem(spec)` | A setting on the app's plugin settings page: `{ id, title, description?, group?, priority?, type, defaultValue }` with `type` `boolean`, `text`, `number` (`min?`, `max?`, `step?`, `unit?`) or `select` (`options: [{ value, label }]`). |
+| `getSettingValue(id)` / `setSettingValue(id, value)` / `resetSettingValue(id)` / `onSettingValueChange(id, listener)` | Read, write, reset and watch those settings. |
+| `addSettingTab`, `addStatusBarItem`, `addRibbonAction`, `addPanel` / `openPanel` / `closePanel`, `registerExplorerDecorator` | UI contributions, described above. |
+| `loadData()` / `saveData(value)` | Plugin-scoped JSON state (1 MiB). |
+| `addAgentTool(spec)` | Needs `agent.tools`; described above. |
+| `createWebView(container)` | Needs `web.browse`; see below. |
+
+`doc` in the document callbacks is `{ path, title, kind, indexed, editable }`.
+
+**Permissions.** A plugin declares what it needs in `plugin.json` `permissions`; nothing is granted until
+the user reviews and accepts it in **Settings → Extensions**.
+
+- `knowledge.read` adds `this.app.knowledge.listDocuments()`, `indexStatus()`, `readDocument({ path })`,
+  `backlinks({ path })`, `resolveCitation({ raw })` and `search({ query, regex?, caseSensitive?, maxResults? })`.
+  They resolve with plain data (`readDocument` gives `{ meta, content, headings, links, citations }`;
+  `search` gives `[{ path, line, column, text, matchStart, matchEnd }]`), or with
+  `{ _tag: 'Err', error: { code, message } }`, for example `NOT_FOUND` for a missing document.
+- `knowledge.propose` adds `this.app.knowledge.propose({ description, changes: [{ path, newContent }] })`.
+  Nothing is written until the user approves it in the same review dialog the Agent uses; only one
+  proposal can be open at a time. It resolves with `{ outcome, summary, reason?, paths? }` where `outcome`
+  is `applied` (with the written `paths`), `rejected` (with the user's `reason`), `timeout`,
+  `not-reviewed` (the user never saw it, `reason` says why: another proposal was open, the window
+  closed…) or `aborted`. Branch on `outcome`; `summary` is prose whose wording may change. An invalid
+  request (for example content identical to the file) resolves with `{ _tag: 'Err', error }` instead.
+- `agent.tools` enables `addAgentTool`.
+- `web.browse` enables `createWebView(container)`, which returns a handle with `ready`, `state`,
+  `navigate(url)`, `back()`, `forward()`, `reload()`, `stop()`, `readPage({ maxChars? })`,
+  `readSelection()`, `onState(listener)` and `dispose()`. Each plugin gets its own persistent browsing
+  session; only http(s) pages load, links that open a new window open in the same view, and downloads
+  and permission prompts are refused.
+  Page text is untrusted input: quote it as data, never as instructions.
+
 Runtime plugins currently share the app renderer realm, so ID scoping prevents filesystem collisions but is
 not a sandbox between hostile plugins. Install only code you trust.
 
