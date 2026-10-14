@@ -106,13 +106,20 @@ Registrations are removed automatically when the plugin is disabled, reloaded, o
 | `addDocumentAction({ id, title, icon?, priority?, when?(doc), onClick(doc) })` | A button in the open document's toolbar. |
 | `addDocumentMenuItem({ id, title, icon?, group?, priority?, when?(doc), onSelect(doc) })` | An entry in the document's context menu. |
 | `showNotice({ message, title?, kind?, timeoutMs? })` | A notification; `kind` is `info`, `success`, `warning` or `error`; `timeoutMs` 0 keeps it until dismissed, otherwise 1,000–30,000. |
-| `onEvent(name, listener)` | `appearance.theme-changed` `{ theme }`, `appearance.locale-changed` `{ locale }`; with `knowledge.read` also `knowledge.document-opened` `{ path, anchor }` and `knowledge.index-changed` `{ status }`. |
+| `onEvent(name, listener)` | `appearance.theme-changed` `{ theme }`, `appearance.locale-changed` `{ locale }`; with `knowledge.read` also `knowledge.document-opened` `{ path, anchor }`, `knowledge.index-changed` `{ status }` and `knowledge.root-changed` `{}` (the knowledge base in use changed — drop root-bound state). |
 | `addSettingItem(spec)` | A setting on the app's plugin settings page: `{ id, title, description?, group?, priority?, type, defaultValue }` with `type` `boolean`, `text`, `number` (`min?`, `max?`, `step?`, `unit?`) or `select` (`options: [{ value, label }]`). |
 | `getSettingValue(id)` / `setSettingValue(id, value)` / `resetSettingValue(id)` / `onSettingValueChange(id, listener)` | Read, write, reset and watch those settings. |
 | `addSettingTab`, `addStatusBarItem`, `addRibbonAction`, `addPanel` / `openPanel` / `closePanel`, `registerExplorerDecorator` | UI contributions, described above. |
 | `loadData()` / `saveData(value)` | Plugin-scoped JSON state (1 MiB). |
 | `addAgentTool(spec)` | Needs `agent.tools`; described above. |
 | `createWebView(container)` | Needs `web.browse`; see below. |
+| `this.app.storage` (optional) | Per-plugin text files for the current knowledge base: `scope()` gives `{ rootGeneration }`; `read` / `write(gen, name, text, { expectedRevision? })` / `list` / `remove` take that generation and fail with `ROOT_CHANGED` after a root switch. Names `^[a-z0-9][a-z0-9._-]{0,63}$`; ≤ 4 MiB per file, 256 files and 32 MiB per root. |
+| `addSelectionAction({ id, title, icon?, priority?, surfaces?, onSelect(context) })` | An entry in the context menu of selected text: `reading` (needs `knowledge.read`) and/or `web` (only in views created with `createWebView(container, { shareSelection: true })`). `context` is `{ text, sentence?, source }`. |
+| `this.app.chat.appendToComposer(text)` | Appends text to the chat input (never sends, never overwrites the draft); `false` when empty or over 4,000 characters. |
+| `addReadingDecoration({ id, renderCard? })` | Needs `knowledge.read`; the handle's `setTerms([{ surface, tone, key }])` marks words in the reading text (`tone` `learning` / `familiar` / `known`); `renderCard(container, context)` fills the card shown when one is clicked. Absent where CSS Custom Highlights are unavailable. |
+| `addReadingStatus({ id })` | Needs `knowledge.read` to show. `set(epoch, path, { text, tone?, title?, action? } \| null)` puts one chip in the reading pane's top bar for that document; `action` may only be `{ kind: 'open-panel', panelId }` (one of your panels) and is run by the app. |
+| `addLearningSuggestions({ id, heading })` | Needs `knowledge.read` to show. `set(epoch, [{ id, title, detail?, documentPath }])` (≤ 3, `wiki/` or `docs/` Markdown) lists items under the Learning Coach; the app opens the document on click. |
+| `this.app.workspace.scope()` / `openDocument(path)` | `scope()` gives `{ epoch }`, which changes whenever the knowledge base in use changes — pass it to the two `set` calls above, which refuse an old epoch. `openDocument` (needs `knowledge.read`) opens a `wiki/` or `docs/` Markdown document only right after a real click or key press inside your panel or card, once per gesture. |
 
 `doc` in the document callbacks is `{ path, title, kind, indexed, editable }`.
 
