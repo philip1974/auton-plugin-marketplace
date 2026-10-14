@@ -43,6 +43,24 @@
         "web"
       ],
       "verified": false
+    },
+    {
+      "id": "dev.auton.english-vocab",
+      "name": "English Vocab",
+      "description": "Collect English words from what you read — the reading pane, shared web pages (Browser Panel 0.7.0+) or the chat — into wiki/vocab notes the Agent writes and you review, then review them with FSRS spaced repetition (flashcards, reverse spelling, listening spelling) without review prompts. Needs Auton Knowledge 0.3.0 or newer; older versions show a compatibility notice.",
+      "descriptions": {
+        "zh": "把阅读中遇到的英文生词收进知识库：在阅读区或共享选区的网页（Browser Panel 0.7.0+）里右键，或直接在对话里让 Agent 收；Agent 写释义，你审阅后保存为 wiki/vocab 笔记。按 FSRS 间隔重复复习（翻卡、反向拼写、听音拼写），复习不弹审阅。需要 Auton Knowledge 0.3.0 或更新；旧版本只显示兼容提示。",
+        "ja": "読書中に出会った英単語をナレッジベースに集めます。閲覧ペインや選択共有を有効にしたウェブページ（Browser Panel 0.7.0 以降）で右クリックするか、チャットで Agent に頼みます。Agent が意味を書き、あなたがレビューしてから wiki/vocab のノートとして保存します。FSRS の間隔反復で復習（フラッシュカード、逆スペリング、聞き取りスペリング）し、復習ではレビューを求めません。Auton Knowledge 0.3.0 以降が必要です。古いバージョンでは互換性の案内だけが表示されます。",
+        "ko": "읽다가 만난 영어 단어를 지식베이스에 모읍니다. 읽기 창이나 선택 공유를 켠 웹 페이지(Browser Panel 0.7.0 이상)에서 오른쪽 클릭하거나 채팅에서 Agent에게 요청하세요. Agent가 뜻을 쓰고 검토를 거쳐 wiki/vocab 노트로 저장됩니다. FSRS 간격 반복으로 복습(플래시카드, 거꾸로 철자, 듣고 철자 쓰기)하며 복습할 때는 검토 창이 뜨지 않습니다. Auton Knowledge 0.3.0 이상이 필요하며, 이전 버전에서는 호환성 안내만 표시됩니다."
+      },
+      "repository": "philip1974/auton-english-vocab",
+      "ref": "v0.1.0",
+      "tags": [
+        "english",
+        "vocabulary",
+        "learning"
+      ],
+      "verified": false
     }
   ]
 }
