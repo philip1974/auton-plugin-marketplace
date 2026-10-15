@@ -54,7 +54,7 @@
         "ko": "읽다가 만난 영어 단어를 지식베이스에 모읍니다. 읽기 창이나 선택 공유를 켠 웹 페이지(Browser Panel 0.7.0 이상)에서 오른쪽 클릭하거나 채팅에서 Agent에게 요청하세요. Agent가 뜻을 쓰고 검토를 거쳐 wiki/vocab 노트로 저장됩니다. FSRS 간격 반복으로 복습(플래시카드, 거꾸로 철자, 듣고 철자 쓰기)하며 복습할 때는 검토 창이 뜨지 않습니다. Auton Knowledge 0.3.0 이상이 필요하며, 이전 버전에서는 호환성 안내만 표시됩니다."
       },
       "repository": "philip1974/auton-english-vocab",
-      "ref": "v0.6.1",
+      "ref": "v0.7.0",
       "tags": [
         "english",
         "vocabulary",
